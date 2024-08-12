@@ -1,0 +1,21 @@
+{
+    "name": "ltaooo/data",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Ltaooo\\Data\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/string": "*",
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.35"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
