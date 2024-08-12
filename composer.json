@@ -7,7 +7,6 @@
         }
     },
     "require": {
-        "symfony/string": "*",
         "php": ">=8.0"
     },
     "require-dev": {

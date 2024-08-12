@@ -10,17 +10,20 @@ use JsonSerializable;
 use Ltaooo\Data\Attribute\DataAttribute;
 use Ltaooo\Data\Contract\ArrayAble;
 use Ltaooo\Data\Traits\ArrayAccessTrait;
+use Ltaooo\Data\Util\Str;
 use ReflectionClass;
 use ReflectionProperty;
-use function Symfony\Component\String\u;
 
 class Data implements ArrayAble, ArrayAccess, JsonSerializable
 {
     use ArrayAccessTrait;
+
     protected ?ReflectionClass $_staticReflection = null;
 
-    protected array $_strCache = [];
-
+    /**
+     * @param array|ArrayAble $data
+     * @throws
+     */
     public function __construct(array|Arrayable $data = [])
     {
         $this->fill($data instanceof Arrayable ? $data->toArray() : $data);
@@ -66,8 +69,8 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         }
         foreach ($this->getStaticReflection()->getProperties() as $property) {
             $propertyName = $property->getName();
-            $camelCasePropertyName = $this->strCamel($propertyName);
-            $snakePropertyName = $this->strSnake($propertyName);
+            $camelCasePropertyName = Str::camel($propertyName);
+            $snakePropertyName = Str::snake($propertyName);
             if (
                 !array_key_exists($camelCasePropertyName, $data)
                 && !array_key_exists($snakePropertyName, $data)
@@ -117,7 +120,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             if ($this->isInsideProperty($property)) {
                 continue;
             }
-            $name = $toSnake ? $this->strSnake($property->getName()) : $property->getName();
+            $name = $toSnake ? Str::snake($property->getName()) : $property->getName();
             $result[$name] = $this->forValue($property->getValue($object), $toSnake);
         }
         return $result;
@@ -156,28 +159,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $this->_staticReflection ?? $this->getReflectionClass($this);
     }
 
-    protected function strCamel(string $str)
-    {
-        if (isset($this->_strCache['camel'][$str])) {
-            return $this->_strCache['camel'][$str];
-        }
-        return $this->_strCache['camel'][$str] = u($str)->camel()->toString();
-    }
-
-    protected function strSnake(string $str)
-    {
-        if (isset($this->_strCache['snake'][$str])) {
-            return $this->_strCache['snake'][$str];
-        }
-        return $this->_strCache['snake'][$str] = u($str)->snake()->toString();
-    }
-
     protected function isInsideProperty(ReflectionProperty $property): bool
     {
-        if (isset($this->_strCache['inside'][$property->getName()])) {
-            return $this->_strCache['inside'][$property->getName()];
-        }
-        return $this->_strCache['inside'][$property->getName()] = u($property->getName())->startsWith('_');
+        return Str::startsWith($property->getName(), '_');
     }
 
 }

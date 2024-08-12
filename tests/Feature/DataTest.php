@@ -2,6 +2,7 @@
 
 use Ltaooo\Data\Attribute\DataAttribute;
 use Ltaooo\Data\Data;
+use Ltaooo\Data\Util\Str;
 
 test('data', function () {
 
@@ -23,6 +24,13 @@ test('serialize', function () {
     expect($b)->toBeInstanceOf(A::class)
         ->and($b->name)->toBe($a->name)
         ->and($b->addressDetail)->toBe($a->addressDetail);
+});
+
+test('str', function () {
+    expect(Str::snake('HelloWorld'))->toBe('hello_world')
+        ->and(Str::camel('hello_world'))->toBe('helloWorld')
+        ->and(Str::camel(''))->toBe('')
+        ->and(Str::startsWith('hello', 'he'))->toBeTrue();
 });
 
 
