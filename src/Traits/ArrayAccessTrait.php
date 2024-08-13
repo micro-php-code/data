@@ -2,6 +2,8 @@
 
 namespace Ltaooo\Data\Traits;
 
+use ReturnTypeWillChange;
+
 trait ArrayAccessTrait
 {
     public function offsetExists($offset): bool
@@ -9,6 +11,7 @@ trait ArrayAccessTrait
         return isset($this->{$offset});
     }
 
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->{$offset};

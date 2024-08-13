@@ -39,18 +39,6 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $this->objectToArray($this, false);
     }
 
-    public function __serialize(): array
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function __unserialize(array $data)
-    {
-        $this->fill($data);
-    }
 
     public static function from(array|Arrayable $data): static
     {
@@ -82,14 +70,17 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             $value = $data[$camelCasePropertyName] ?? ($data[$snakePropertyName] ?? null);
             if ($type->isBuiltin() && !is_null($value)) {
                 $property->setValue($this, $value);
-            }
-            if (class_exists($type->getName())) {
+            } elseif (PHP_VERSION_ID > 80100 && enum_exists($type->getName())) {
+                $property->setValue($this, $value);
+            } elseif (class_exists($type->getName())) {
                 if (is_array($value)) {
                     $instance = new ($type->getName());
                     if ($instance instanceof Data) {
                         $instance->fill($value);
                     }
                     $property->setValue($this, $instance);
+                } else {
+                    $property->setValue($this, $value);
                 }
             }
         }
@@ -121,7 +112,11 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
                 continue;
             }
             $name = $toSnake ? Str::snake($property->getName()) : $property->getName();
-            $result[$name] = $this->forValue($property->getValue($object), $toSnake);
+            if ($property->isInitialized($object)) {
+                $result[$name] = $this->forValue($property->getValue($object), $toSnake);
+            } else {
+                $result[$name] = null;
+            }
         }
         return $result;
     }
@@ -156,7 +151,10 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
 
     protected function getStaticReflection(): ReflectionClass
     {
-        return $this->_staticReflection ?? $this->getReflectionClass($this);
+        if ($this->_staticReflection) {
+            return $this->_staticReflection;
+        }
+        return $this->_staticReflection = $this->getReflectionClass($this);
     }
 
     protected function isInsideProperty(ReflectionProperty $property): bool

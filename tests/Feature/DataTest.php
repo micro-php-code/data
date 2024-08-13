@@ -16,7 +16,6 @@ test('data', function () {
 });
 
 test('serialize', function () {
-
     $value = ['name' => '123', 'phones' => [1, 2], 'b' => ['name' => 'hello'], 'address_detail' => 'haa'];
     $a = A::from($value);
     /** @var A $b */
@@ -24,6 +23,12 @@ test('serialize', function () {
     expect($b)->toBeInstanceOf(A::class)
         ->and($b->name)->toBe($a->name)
         ->and($b->addressDetail)->toBe($a->addressDetail);
+
+    $c = C::from(['name' => '123', 'a' => enumA::A]);
+    var_dump(serialize($c));
+    $c1 = unserialize(serialize($c));
+    var_dump($c1);
+    expect($c1)->toBeInstanceOf(C::class);
 });
 
 test('str', function () {
@@ -48,4 +53,17 @@ class A extends Data
 class B extends Data
 {
     public string $name;
+
+}
+
+class C extends Data
+{
+    public string $name;
+
+    public EnumA $a;
+}
+
+enum enumA: string
+{
+    case A = 'a';
 }
