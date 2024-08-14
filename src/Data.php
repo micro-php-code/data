@@ -21,12 +21,11 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     protected ?ReflectionClass $_staticReflection = null;
 
     /**
-     * @param array|ArrayAble $data
      * @throws
      */
-    public function __construct(array|Arrayable $data = [])
+    public function __construct($data = [])
     {
-        $this->fill($data instanceof Arrayable ? $data->toArray() : $data);
+        $this->fill($this->isArrayAble($data) ? $data->toArray() : $data);
     }
 
     public function __toString(): string
@@ -40,7 +39,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     }
 
 
-    public static function from(array|Arrayable $data): static
+    public static function from($data): static
     {
         return new static($data);
     }
@@ -127,7 +126,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             return array_map(fn($item) => $this->forValue($item, $toSnake), $value);
         }
         if (is_object($value)) {
-            if ($value instanceof Arrayable) {
+            if ($this->isArrayAble($value)) {
                 return $value->toArray();
             }
             return $this->objectToArray($value, $toSnake);
@@ -162,4 +161,8 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return Str::startsWith($property->getName(), '_');
     }
 
+    protected function isArrayAble($data): bool
+    {
+        return $data instanceof ArrayAble || is_object($data) && method_exists($data, 'toArray');
+    }
 }
