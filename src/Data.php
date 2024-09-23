@@ -12,7 +12,9 @@ use Ltaooo\Data\Contract\ArrayAble;
 use Ltaooo\Data\Traits\ArrayAccessTrait;
 use Ltaooo\Data\Util\Str;
 use ReflectionClass;
+use ReflectionIntersectionType;
 use ReflectionProperty;
+use ReflectionUnionType;
 
 class Data implements ArrayAble, ArrayAccess, JsonSerializable
 {
@@ -67,7 +69,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             }
             $type = $property->getType();
             $value = $data[$camelCasePropertyName] ?? ($data[$snakePropertyName] ?? null);
-            if ($type->isBuiltin() && !is_null($value)) {
+            if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
+                $property->setValue($this, $value);
+            } elseif ($type->isBuiltin() && !is_null($value)) {
                 $property->setValue($this, $value);
             } elseif (PHP_VERSION_ID > 80100 && enum_exists($type->getName())) {
                 $property->setValue($this, $value);

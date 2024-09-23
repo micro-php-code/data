@@ -32,6 +32,15 @@ test('serialize', function () {
 });
 
 test('str', function () {
+    $value = ['name' => 'hello'];
+    $d = D::from($value);
+    expect($d)->toBeInstanceOf(Data::class)
+        ->and($d->name)
+        ->toEqual($value['name']);
+});
+
+
+test('union type', function () {
     expect(Str::snake('HelloWorld'))->toBe('hello_world')
         ->and(Str::camel('hello_world'))->toBe('helloWorld')
         ->and(Str::camel(''))->toBe('')
@@ -66,4 +75,8 @@ class C extends Data
 enum enumA: string
 {
     case A = 'a';
+}
+
+class D extends Data {
+    public string|int $name;
 }
