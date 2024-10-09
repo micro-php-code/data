@@ -25,9 +25,7 @@ test('serialize', function () {
         ->and($b->addressDetail)->toBe($a->addressDetail);
 
     $c = C::from(['name' => '123', 'a' => enumA::A]);
-    var_dump(serialize($c));
     $c1 = unserialize(serialize($c));
-    var_dump($c1);
     expect($c1)->toBeInstanceOf(C::class);
 });
 
@@ -50,12 +48,23 @@ test('union type', function () {
 test('enum', function () {
     $c = C::from(['name' => '123', 'a' => 'a']);
     expect($c->a)->toBe(enumA::A);
+    $c = serialize($c);
+    $c = unserialize($c);
+    expect($c->a)->toBe(enumA::A);
 
 });
 
 it('throws exception', function () {
     C::from(['name' => '123', 'a' => 'b']);
 })->throws(ValueError::class);
+
+test('construct', function () {
+    $e = new E('hello');
+    expect($e->name)->toBe('hello');
+    $e = serialize($e);
+    $e = unserialize($e);
+    expect($e)->toBeInstanceOf(E::class);
+});
 
 #[DataAttribute(toSnakeArray: true)]
 class A extends Data
@@ -89,4 +98,15 @@ enum enumA: string
 class D extends Data
 {
     public string|int $name;
+}
+
+class E extends Data
+{
+    public string $name;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+        parent::__construct();
+    }
 }
