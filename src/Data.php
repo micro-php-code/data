@@ -74,6 +74,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             } elseif ($type->isBuiltin() && !is_null($value)) {
                 $property->setValue($this, $value);
             } elseif (PHP_VERSION_ID > 80100 && enum_exists($type->getName())) {
+                if (is_int($value) || is_string($value)) {
+                    $value = $type->getName()::from($value);
+                }
                 $property->setValue($this, $value);
             } elseif (class_exists($type->getName())) {
                 if (is_array($value)) {

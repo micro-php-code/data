@@ -47,6 +47,15 @@ test('union type', function () {
         ->and(Str::startsWith('hello', 'he'))->toBeTrue();
 });
 
+test('enum', function () {
+    $c = C::from(['name' => '123', 'a' => 'a']);
+    expect($c->a)->toBe(enumA::A);
+
+});
+
+it('throws exception', function () {
+    C::from(['name' => '123', 'a' => 'b']);
+})->throws(ValueError::class);
 
 #[DataAttribute(toSnakeArray: true)]
 class A extends Data
@@ -77,6 +86,7 @@ enum enumA: string
     case A = 'a';
 }
 
-class D extends Data {
+class D extends Data
+{
     public string|int $name;
 }
