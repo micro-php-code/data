@@ -25,6 +25,7 @@ test('serialize', function () {
         ->and($b->addressDetail)->toBe($a->addressDetail);
 
     $c = C::from(['name' => '123', 'a' => enumA::A]);
+    $c->toArray();
     $c1 = unserialize(serialize($c));
     expect($c1)->toBeInstanceOf(C::class);
 });
@@ -47,7 +48,8 @@ test('union type', function () {
 
 test('enum', function () {
     $c = C::from(['name' => '123', 'a' => 'a']);
-    expect($c->a)->toBe(enumA::A);
+    expect($c->a)->toBe(enumA::A)
+        ->and($c->toArray())->toBe(['name' => '123', 'a' => 'a']);
     $c = serialize($c);
     $c = unserialize($c);
     expect($c->a)->toBe(enumA::A);

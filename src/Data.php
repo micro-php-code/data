@@ -76,7 +76,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
                 $property->setValue($this, $value);
             } elseif (PHP_VERSION_ID > 80100 && enum_exists($type->getName())) {
                 if (is_int($value) || is_string($value)) {
-                    $value = $type->getName()::from($value);
+                    $value = $type->getName()::{'from'}($value);
                 }
                 $property->setValue($this, $value);
             } elseif (class_exists($type->getName())) {
@@ -135,6 +135,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             return array_map(fn($item) => $this->forValue($item, $toSnake), $value);
         }
         if (is_object($value)) {
+            if (PHP_VERSION_ID > 80100 && enum_exists(get_class($value))) {
+                return $value->value;
+            }
             if ($this->isArrayAble($value)) {
                 return $value->toArray();
             }
@@ -175,7 +178,22 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $data instanceof ArrayAble || is_object($data) && method_exists($data, 'toArray');
     }
 
-    protected function beforeFill(array $data): void {}
+    protected function beforeFill(array $data): void
+    {
+    }
 
-    protected function afterFill(array $data) {}
+    protected function afterFill(array $data)
+    {
+    }
+
+    public function __serialize(): array
+    {
+        $data = [];
+        foreach ($this->getStaticReflection()->getProperties() as $property) {
+            if (!$this->isInsideProperty($property)) {
+                $data[$property->getName()] = $property->getValue($this);
+            }
+        }
+        return $data;
+    }
 }
