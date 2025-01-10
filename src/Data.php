@@ -53,7 +53,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
      */
     public function fill(array $data): static
     {
-        $this->beforeFill($data);
+        $data = $this->beforeFill($data);
         if (empty($data)) {
             return $this;
         }
@@ -178,8 +178,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $data instanceof ArrayAble || is_object($data) && method_exists($data, 'toArray');
     }
 
-    protected function beforeFill(array $data): void
+    protected function beforeFill(array $data): array
     {
+        return $data;
     }
 
     protected function afterFill(array $data)
