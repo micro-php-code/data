@@ -1,6 +1,6 @@
 <?php
 
-namespace Ltaooo\Data\Attribute;
+namespace MicroPHP\Data\Attribute;
 
 use Attribute;
 

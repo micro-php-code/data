@@ -1,8 +1,8 @@
 <?php
 
-use Ltaooo\Data\Attribute\DataAttribute;
-use Ltaooo\Data\Data;
-use Ltaooo\Data\Util\Str;
+use MicroPHP\Data\Attribute\DataAttribute;
+use MicroPHP\Data\Data;
+use MicroPHP\Data\Util\Str;
 
 test('data', function () {
 

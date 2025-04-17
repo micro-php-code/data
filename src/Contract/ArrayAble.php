@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Ltaooo\Data\Contract;
+namespace MicroPHP\Data\Contract;
 
 interface ArrayAble
 {

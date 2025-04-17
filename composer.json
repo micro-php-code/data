@@ -1,9 +1,9 @@
 {
-    "name": "ltaooo/data",
+    "name": "microphp/data",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Ltaooo\\Data\\": "src/"
+            "MicroPHP\\Data\\": "src/"
         }
     },
     "require": {

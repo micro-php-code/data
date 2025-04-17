@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Ltaooo\Data\Util;
+namespace MicroPHP\Data\Util;
 
 
 class Str

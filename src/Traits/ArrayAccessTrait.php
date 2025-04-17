@@ -1,6 +1,6 @@
 <?php
 
-namespace Ltaooo\Data\Traits;
+namespace MicroPHP\Data\Traits;
 
 use ReturnTypeWillChange;
 

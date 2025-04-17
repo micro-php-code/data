@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Ltaooo\Data;
+namespace MicroPHP\Data;
 
 use ArrayAccess;
 use Exception;
 use JsonSerializable;
-use Ltaooo\Data\Attribute\DataAttribute;
-use Ltaooo\Data\Contract\ArrayAble;
-use Ltaooo\Data\Traits\ArrayAccessTrait;
-use Ltaooo\Data\Util\Str;
+use MicroPHP\Data\Attribute\DataAttribute;
+use MicroPHP\Data\Contract\ArrayAble;
+use MicroPHP\Data\Traits\ArrayAccessTrait;
+use MicroPHP\Data\Util\Str;
 use ReflectionClass;
 use ReflectionIntersectionType;
 use ReflectionProperty;
