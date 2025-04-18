@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MicroPHP\Data\Traits;
 
 use ReturnTypeWillChange;

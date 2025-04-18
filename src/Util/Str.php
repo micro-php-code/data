@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MicroPHP\Data\Util;
-
 
 class Str
 {
@@ -21,7 +21,7 @@ class Str
         if (isset(static::$_strCache['snake'][$str])) {
             return static::$_strCache['snake'][$str];
         }
-        if (!ctype_lower($str)) {
+        if (! ctype_lower($str)) {
             $str = preg_replace('/\s+/u', '', ucwords($str));
 
             $str = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $str));
@@ -30,7 +30,7 @@ class Str
         return static::$_strCache['snake'][$str] = $str;
     }
 
-    public static function lower($value): array|bool|string|null
+    public static function lower($value): null|array|bool|string
     {
         return mb_strtolower($value, 'UTF-8');
     }

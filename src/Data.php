@@ -23,6 +23,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     protected ?ReflectionClass $_staticReflection = null;
 
     /**
+     * @param mixed $data
      * @throws
      */
     public function __construct($data = [])
@@ -40,6 +41,16 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $this->objectToArray($this, false);
     }
 
+    public function __serialize(): array
+    {
+        $data = [];
+        foreach ($this->getStaticReflection()->getProperties() as $property) {
+            if (! $this->isInsideProperty($property)) {
+                $data[$property->getName()] = $property->getValue($this);
+            }
+        }
+        return $data;
+    }
 
     public static function from($data): static
     {
@@ -47,7 +58,6 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param array $data
      * @return $this
      * @throws
      */
@@ -62,9 +72,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             $camelCasePropertyName = Str::camel($propertyName);
             $snakePropertyName = Str::snake($propertyName);
             if (
-                !array_key_exists($camelCasePropertyName, $data)
-                && !array_key_exists($snakePropertyName, $data)
-                && !$property->isInitialized($this)
+                ! array_key_exists($camelCasePropertyName, $data)
+                && ! array_key_exists($snakePropertyName, $data)
+                && ! $property->isInitialized($this)
             ) {
                 throw new Exception("Property {$property->getName()} is not set in : " . get_class($this));
             }
@@ -72,7 +82,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
             $value = $data[$camelCasePropertyName] ?? ($data[$snakePropertyName] ?? null);
             if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
                 $property->setValue($this, $value);
-            } elseif ($type->isBuiltin() && !is_null($value)) {
+            } elseif ($type->isBuiltin() && ! is_null($value)) {
                 $property->setValue($this, $value);
             } elseif (PHP_VERSION_ID > 80100 && enum_exists($type->getName())) {
                 if (is_int($value) || is_string($value)) {
@@ -132,7 +142,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     protected function forValue(mixed $value, bool $toSnake)
     {
         if (is_array($value)) {
-            return array_map(fn($item) => $this->forValue($item, $toSnake), $value);
+            return array_map(fn ($item) => $this->forValue($item, $toSnake), $value);
         }
         if (is_object($value)) {
             if (PHP_VERSION_ID > 80100 && enum_exists(get_class($value))) {
@@ -142,7 +152,6 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
                 return $value->toArray();
             }
             return $this->objectToArray($value, $toSnake);
-
         }
         return $value;
     }
@@ -183,18 +192,5 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $data;
     }
 
-    protected function afterFill(array $data)
-    {
-    }
-
-    public function __serialize(): array
-    {
-        $data = [];
-        foreach ($this->getStaticReflection()->getProperties() as $property) {
-            if (!$this->isInsideProperty($property)) {
-                $data[$property->getName()] = $property->getValue($this);
-            }
-        }
-        return $data;
-    }
+    protected function afterFill(array $data) {}
 }

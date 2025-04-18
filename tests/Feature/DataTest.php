@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use MicroPHP\Data\Attribute\DataAttribute;
 use MicroPHP\Data\Data;
 use MicroPHP\Data\Util\Str;
 
 test('data', function () {
-
     $value = ['name' => '123', 'phones' => [1, 2], 'b' => ['name' => 'hello'], 'address_detail' => 'haa'];
     $a = A::from($value);
 
@@ -38,7 +39,6 @@ test('str', function () {
         ->toEqual($value['name']);
 });
 
-
 test('union type', function () {
     expect(Str::snake('HelloWorld'))->toBe('hello_world')
         ->and(Str::camel('hello_world'))->toBe('helloWorld')
@@ -53,7 +53,6 @@ test('enum', function () {
     $c = serialize($c);
     $c = unserialize($c);
     expect($c->a)->toBe(enumA::A);
-
 });
 
 it('throws exception', function () {
@@ -74,6 +73,7 @@ class A extends Data
     public string $name;
 
     public array $phones;
+
     public B $b;
 
     public string $addressDetail;
@@ -82,7 +82,6 @@ class A extends Data
 class B extends Data
 {
     public string $name;
-
 }
 
 class C extends Data
@@ -99,7 +98,7 @@ enum enumA: string
 
 class D extends Data
 {
-    public string|int $name;
+    public int|string $name;
 }
 
 class E extends Data
