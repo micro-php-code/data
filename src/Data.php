@@ -124,6 +124,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
 
     protected function propertyToArray(object $object, bool $toSnake, ReflectionProperty ...$properties): array
     {
+        if (! $object instanceof Data) {
+            return json_decode(json_encode($object), true);
+        }
         $result = [];
         foreach ($properties as $property) {
             if ($this->isInsideProperty($property)) {
