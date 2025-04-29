@@ -23,10 +23,9 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
     protected ?ReflectionClass $_staticReflection = null;
 
     /**
-     * @param mixed $data
      * @throws
      */
-    public function __construct($data = [])
+    public function __construct(mixed $data = [])
     {
         $this->fill($this->isArrayAble($data) ? $data->toArray() : $data);
     }
@@ -63,7 +62,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
      */
     public function fill(array $data): static
     {
-        $data = $this->beforeFill($data);
+        $this->beforeFill($data);
         if (empty($data)) {
             return $this;
         }
@@ -122,10 +121,10 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $this->toArray();
     }
 
-    protected function propertyToArray(object $object, bool $toSnake, ReflectionProperty ...$properties): array
+    protected function propertyToArray(object $object, bool $toSnake, ReflectionProperty ...$properties): array|object
     {
-        if (! $object instanceof Data) {
-            return json_decode(json_encode($object), true);
+        if (! $this->isArrayAble($object)) {
+            return $object;
         }
         $result = [];
         foreach ($properties as $property) {
@@ -159,7 +158,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $value;
     }
 
-    protected function objectToArray(object $object, $toSnake): array
+    protected function objectToArray(object $object, $toSnake): array|object
     {
         return $this->propertyToArray($object, $toSnake, ...$this->getReflectionClass($object)->getProperties());
     }
@@ -190,10 +189,7 @@ class Data implements ArrayAble, ArrayAccess, JsonSerializable
         return $data instanceof ArrayAble || is_object($data) && method_exists($data, 'toArray');
     }
 
-    protected function beforeFill(array $data): array
-    {
-        return $data;
-    }
+    protected function beforeFill(array &$data): void {}
 
     protected function afterFill(array $data) {}
 }

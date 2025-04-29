@@ -67,6 +67,12 @@ test('construct', function () {
     expect($e)->toBeInstanceOf(E::class);
 });
 
+test('object toArray', function () {
+    $e = new F(new DateTimeImmutable(), new E('hello'));
+    expect($e->toArray()['date'])->toBeInstanceOf(DateTimeImmutable::class)
+        ->and($e->toArray()['e'])->toBeArray();
+});
+
 #[DataAttribute(toSnakeArray: true)]
 class A extends Data
 {
@@ -108,6 +114,20 @@ class E extends Data
     public function __construct(string $name)
     {
         $this->name = $name;
+        parent::__construct();
+    }
+}
+
+class F extends Data
+{
+    public DateTimeImmutable $date;
+
+    public E $e;
+
+    public function __construct(DateTimeImmutable $date, E $e)
+    {
+        $this->date = $date;
+        $this->e = $e;
         parent::__construct();
     }
 }
